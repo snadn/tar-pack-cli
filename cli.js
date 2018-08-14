@@ -4,8 +4,8 @@
 const path = require('path');
 const updateNotifier = require('update-notifier');
 const meow = require('meow');
-const tar = require('tar-pack');
 const mkdirp = require('mkdirp');
+const tar = require('tar');
 
 const cli = meow(`
 	Usage
@@ -30,20 +30,15 @@ updateNotifier({
 	pkg: cli.pkg
 }).notify();
 
-function pack(src, dist) {
-	mkdirp.sync(path.dirname(dist));
-	return new Promise((resolve, reject) => {
-		tar.pack(src, {
-			fromBase: true
-		})
-		.pipe(require('fs').createWriteStream(dist))
-		.on('error', err => {
-			reject(err);
-		})
-		.on('close', () => {
-			resolve();
-		});
-	});
+function pack(src, flags) {
+	const dirname = path.dirname(flags.file);
+
+	mkdirp.sync(dirname);
+	return tar.create({
+		gzip: true,
+		...flags,
+		sync: true
+	}, src);
 }
 
 if (cli.input.length === 0) {
@@ -51,4 +46,9 @@ if (cli.input.length === 0) {
 	process.exit(1);
 }
 
-pack(cli.input[0], cli.flags.file);
+if (!cli.flags.file) {
+	console.error('Need specify file path');
+	process.exit(1);
+}
+
+pack(cli.input, cli.flags);
