@@ -1,6 +1,6 @@
 {
 	"name": "tar-pack-cli",
-	"version": "2.0.0",
+	"version": "2.0.1",
 	"description": "tar pack cli",
 	"license": "MIT",
 	"repository": "snadn/tar-pack-cli",
@@ -13,7 +13,7 @@
 		"tar-pack-cli": "cli.js"
 	},
 	"engines": {
-		"node": ">=4"
+		"node": ">=8"
 	},
 	"scripts": {
 		"test": "xo && ava"
